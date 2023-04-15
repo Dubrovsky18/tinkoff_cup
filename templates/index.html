@@ -1,0 +1,26 @@
+{{ define "index" }}
+{{ template "header" }}
+
+<main role="main" class="inner cover">
+    <h1 class="cover-heading">The main page</h1>
+    <p class="lead">Hello my dear, dear friends</p>
+    {{ range . }}
+    <div class="alert alert-danger">
+        <h2>{{ .Title }}</h2>
+        <p>{{ .Anons }}</p>
+        <a href="/post/{{ .Id }}" class="btn btn-danger">Read continue</a>
+    </div>
+    {{ else }}
+    <p class="lead">We have not reviews</p>
+    {{ end }}
+    <p class="lead">
+        <a href="/login" class="btn btn-lg btn-secondary"> Login</a>
+    </p>
+    <p class="lead">
+        <a href="/registration" class="btn btn-lg btn-secondary"> Sing Up</a>
+    </p>
+</main>
+{{ template "footer" }}
+
+{{ end }}
+
