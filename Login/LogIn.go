@@ -1,6 +1,7 @@
 package Login
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/Dubrovsky18/tinkoff_cup/Login/Conn"
 	_ "github.com/Dubrovsky18/tinkoff_cup/Login/Conn"
@@ -16,16 +17,13 @@ func LoginHandleGet(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, err.Error())
 	}
 
-	t.ExecuteTemplate(w, "index", nil)
+	t.ExecuteTemplate(w, "login", nil)
 
 }
 
 func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	login := r.FormValue("login")
 	password := r.FormValue("password")
-
-	fmt.Println("LoginHandleGet:", login)
-	fmt.Println("Password:", password)
 
 	db, err := Conn.OpenDB()
 	if err != nil {
@@ -36,9 +34,12 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 
 	// Ищем пользователя в базе данных PostgreSQL
 	var company Company
-	err = db.QueryRow("SELECT * FROM users WHERE company=$1", login).Scan(&company.Login, &company.Password)
-	if err != nil {
+	err = db.QueryRow("SELECT * FROM company WHERE login=$1", login).Scan(&company.Login, &company.Password)
+	if err == sql.ErrNoRows {
 		http.Error(w, "Invalid login or password", http.StatusBadRequest)
+		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -49,4 +50,14 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Устанавливаем cookie с информацией о пользователе
+	cookie := http.Cookie{
+		Name:     "user",
+		Value:    company.Login,
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &cookie)
+
+	// Перенаправляем пользователя на главную страницу
+	http.Redirect(w, r, "/main", http.StatusSeeOther)
 }

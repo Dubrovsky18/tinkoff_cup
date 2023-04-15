@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/Dubrovsky18/tinkoff_cup/Login/Conn"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 	"html/template"
 	"net/http"
 )
@@ -37,27 +39,28 @@ func insertUser(db *sql.DB, company Company) error {
 // handleRegister обработчик для страницы регистрации
 func RegistrationHandlerGet(w http.ResponseWriter, r *http.Request) {
 	// Отображаем форму регистрации
-	t, err := template.ParseFiles("templates/login.html", "templates/header.html", "templates/footer.html")
+	t, err := template.ParseFiles("templates/registration.html", "templates/header.html", "templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-
-	t.ExecuteTemplate(w, "index", nil)
-
+	err = t.ExecuteTemplate(w, "registration", nil)
+	fmt.Println(err)
 }
 func RegistrationHandlerPost(w http.ResponseWriter, r *http.Request) {
 	// Получаем данные пользователя из формы
 	login := r.FormValue("login")
 	password := r.FormValue("password")
 
-	fmt.Println("Login:", login)
-	fmt.Println("Passwd:", password)
+	// Хешируем пароль
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	// Создаем пользователя
+	company := Company{Login: login, Password: string(hashedPassword)}
 
-	company := Company{Login: login, Password: password}
-
-	// Открываем соединение с базой данных PostgreSQL
 	db, err := Conn.OpenDB()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -85,5 +88,6 @@ func RegistrationHandlerPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Перенаправляем пользователя на страницу после успешной регистрации
-	http.Redirect(w, r, "/success", http.StatusSeeOther)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+
 }

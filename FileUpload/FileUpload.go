@@ -15,7 +15,7 @@ func HandleMain(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, err.Error())
 	}
 
-	t.ExecuteTemplate(w, "index", nil)
+	t.ExecuteTemplate(w, "main", nil)
 
 }
 
@@ -48,4 +48,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	// Выводим сообщение об успешной загрузке файла на странице
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write([]byte(fmt.Sprintf("File %s uploaded successfully", header.Filename)))
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
 }

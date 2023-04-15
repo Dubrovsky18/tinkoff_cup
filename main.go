@@ -28,12 +28,15 @@ func handleFunc() {
 	router.HandleFunc("/", index).Methods("GET")
 	router.HandleFunc("/login", Login.LoginHandlePost).Methods("POST")
 	router.HandleFunc("/login", Login.LoginHandleGet).Methods("GET")
-	router.HandleFunc("/registration", Login.RegistrationHandlerGet).Methods("GET")
 	router.HandleFunc("/registration", Login.RegistrationHandlerPost).Methods("POST")
+	router.HandleFunc("/registration", Login.RegistrationHandlerGet).Methods("GET")
 	router.HandleFunc("/main", FileUpload.HandleMain).Methods("GET")
 	router.HandleFunc("/main", FileUpload.FileUpload).Methods("POST")
 
-	//http.Handle("/", router)
+	http.Handle("/", router)
+	http.Handle("/login", router)
+	http.Handle("registration", router)
+	http.Handle("main", router)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	http.ListenAndServe(":9090", nil)
 }
