@@ -3,13 +3,14 @@ package main
 import (
 	_ "database/sql"
 	"fmt"
+	"html/template"
+	"net/http"
+
 	"github.com/Dubrovsky18/tinkoff_cup/FileLoad"
 	"github.com/Dubrovsky18/tinkoff_cup/Login"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	"html/template"
-	"net/http"
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +31,8 @@ func handleFunc() {
 	router.HandleFunc("/login", Login.LoginHandleGet).Methods("GET")
 	router.HandleFunc("/registration", Login.RegistrationHandlerPost).Methods("POST")
 	router.HandleFunc("/registration", Login.RegistrationHandlerGet).Methods("GET")
+	router.HandleFunc("/registration_team", Login.RegistrationTeamHandlerPost).Methods("POST")
+	router.HandleFunc("/registration_team", Login.RegistrationTeamHandlerGet).Methods("GET")
 	router.HandleFunc("/upload", FileLoad.HandleUpload).Methods("GET")
 	router.HandleFunc("/upload", FileLoad.FileUpload).Methods("POST")
 	router.HandleFunc("/downloadFile", FileLoad.FileDownload).Methods("GET")
