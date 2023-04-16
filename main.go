@@ -38,6 +38,7 @@ func handleFunc() {
 	http.Handle("/", router)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	http.ListenAndServe(":9090", nil)
+	http.ListenAndServe(":4999", nil)
 }
 
 func main() {
