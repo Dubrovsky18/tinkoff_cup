@@ -1,4 +1,4 @@
-package FileLoad
+ackage FileLoad
 
 import (
 	"fmt"

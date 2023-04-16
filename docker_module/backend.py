@@ -3,8 +3,9 @@ import time
 import docker
 import os
 import tempfile
-from flask import Flask, request
 
+import requests
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -16,9 +17,6 @@ def run_container():
         filename = request.args.get('filename')
         temp_dir = request.args.get('tempdir')
 
-        # # Копируем файл в локальную папку докера
-        # shutil.copy("/home/alla/Downloads/Telegram Desktop/webtest.py", '.')
-
         # Конфигурация Docker
         client = docker.from_env()
 
@@ -28,18 +26,13 @@ def run_container():
         # Создание Dockerfile из шаблона
         dockerfile_template_path = 'Dockerfile-template'
         path_to_test_in_container = f"/app/{filename}"
-        # print(test_file_path)
-        # if os.path.isfile(test_file_path):
-        #     print('File exist')
-        # else:
-        #     print('File dont exist')
 
         # Добавление в шаблон кастомных строк
         dockerfile_copy_path = os.path.join(temp_dir, 'Dockerfile')
         with open(dockerfile_template_path, 'r') as f:
             dockerfile_content = f.read()
             dockerfile_content += f"\nCOPY {filename} /app/{filename}\n"
-            dockerfile_content += f"\nCMD [\"python\", \"{path_to_test_in_container}\"]\n "
+            dockerfile_content += f"\nCMD [\"python\", \"{path_to_test_in_container}\", \" >> result\"]\n "
 
         with open(dockerfile_copy_path, 'w') as f:
             f.write(dockerfile_content)
@@ -55,16 +48,28 @@ def run_container():
         for log in container.logs(stream=True):
             print(log)
 
-        # Удаление временной директории с файлами
-        # shutil.rmtree(test_file_path, False)
+        # Копируем из контейнера файл с логами
+        os.makedirs("./local_directory", exist_ok=True)
 
+        with open("./local_directory/result", "wb") as f:
+            bits, _ = container.get_archive("/app/result")
+            for chunk in bits:
+                f.write(chunk)
 
+        # Удаляем контейнер
+        container.remove(force=True)
+
+        # Отправляем файл на go сервер
+        url = "http://localhost:4999/"
+        file_path = "./local_directory/result"
+
+        with open(file_path, "rb") as file:
+            response = requests.post(url, files={"file": file})
+        print(response.status_code)
 
     except Exception as e:
         print('Error:', e)
 
 
-
 if __name__ == '__main__':
     app.run(port=5000)
-# run_container()
