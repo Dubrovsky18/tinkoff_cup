@@ -15,7 +15,7 @@ type User struct {
 	nickname string
 }
 
-var userName string = "korl"
+var userName string
 
 func HandleDownload(w http.ResponseWriter, r *http.Request) {
 

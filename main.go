@@ -32,7 +32,6 @@ func handleFunc() {
 	router.HandleFunc("/registration", Login.RegistrationHandlerGet).Methods("GET")
 	router.HandleFunc("/upload", FileLoad.HandleUpload).Methods("GET")
 	router.HandleFunc("/upload", FileLoad.FileUpload).Methods("POST")
-	router.HandleFunc("/downloadFile", FileLoad.FileDownload).Methods("GET")
 	router.HandleFunc("/download", FileLoad.HandleDownload).Methods("GET")
 
 	http.Handle("/", router)
