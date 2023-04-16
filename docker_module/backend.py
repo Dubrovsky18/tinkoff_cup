@@ -59,17 +59,27 @@ def run_container():
         # Удаляем контейнер
         container.remove(force=True)
 
-        # Отправляем файл на go сервер
-        url = "http://localhost:4999/"
-        file_path = "./local_directory/result"
+#         url = "http://localhost:4999/downloadFile"
+#         file_path = "./local_directory/result"
+#
+#         with open(file_path, "rb") as file:
+#             response = requests.post(url, files={"file": file})
 
-        with open(file_path, "rb") as file:
-            response = requests.post(url, files={"file": file})
-        print(response.status_code)
 
     except Exception as e:
         print('Error:', e)
 
+@app.route('/downloadFile', methods=['POST'])
+def post_file():
+    # Отправляем файл на go сервер
+    url = "http://localhost:4999/downloadFile"
+    file_path = "./local_directory/result"
+
+    with open(file_path, "rb") as file:
+        response = requests.post(url, files={"file": file})
+
+# return str(response.status_code)
 
 if __name__ == '__main__':
     app.run(port=5000)
+
