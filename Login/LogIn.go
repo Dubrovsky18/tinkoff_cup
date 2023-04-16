@@ -59,5 +59,5 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &cookie)
 
 	// Перенаправляем пользователя на главную страницу
-	http.Redirect(w, r, "/main", http.StatusSeeOther)
+	http.Redirect(w, r, "/upload", http.StatusSeeOther)
 }

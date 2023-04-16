@@ -1,2 +1,4 @@
-.Fuck/
-.idea/
+.Fuck/*
+.idea/*
+./FileLoad/FilesWebSiteIn/*
+./FileLoad/FilesWebSiteOut/*
