@@ -64,4 +64,7 @@ def run_container():
         print('Error:', e)
 
 
+
+if __name__ == '__main__':
+    app.run(port=5000)
 # run_container()
