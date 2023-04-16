@@ -1,32 +1,24 @@
 ackage FileLoad
 
 import (
+	"bytes"
 	"fmt"
-	_ "github.com/gorilla/sessions"
 	"html/template"
 	"io"
+	"net"
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
-type User struct {
-	session  string
-	nickname string
-}
-
-var userName string
-
 func HandleDownload(w http.ResponseWriter, r *http.Request) {
-
 	// Проверяем, залогинен ли пользователь
 	session, err := r.Cookie("session")
 	if err != nil || session.Value == "" {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-
-	userName = session.Value
 
 	t, err := template.ParseFiles("templates/download.html", "templates/header.html", "templates/footer.html")
 	if err != nil {
@@ -35,27 +27,44 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 
 	t.ExecuteTemplate(w, "download", nil)
 
-	http.HandleFunc("/downloadFile", FileDownload)
-	http.ListenAndServe(":4999", nil)
-	fmt.Fprintf(w, session.Value, "Download page")
-
+	done := make(chan bool)
+	go FileDownload(w, r, done)
+	select {
+	case <-done:
+		// Файл успешно отправлен
+	case <-time.After(time.Second * 50):
+		// Прошло 10 секунд, но файл так и не пришел
+		http.Error(w, "Время ожидания истекло", http.StatusInternalServerError)
+	}
 }
 
-func FileDownload(w http.ResponseWriter, r *http.Request) {
+func FileDownload(w http.ResponseWriter, r *http.Request, done chan<- bool) {
+	conn, err := net.Dial("tcp", "localhost:4999")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		done <- true
+		return
+	}
+	defer conn.Close()
 
-	filename := r.URL.Query().Get("filename")
-	if filename == "" {
-		http.Error(w, "Не указано имя файла", http.StatusBadRequest)
+	// Получаем имя файла от сервера
+	filename := make([]byte, 1024)
+	n, err := conn.Read(filename)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		done <- true
 		return
 	}
 
-	// Получаем путь к файлу из параметра запроса
-	filePath := fmt.Sprintf("FileLoad/FilesWebSiteOut/tests/%s/%s", userName, "OutFile")
+	// Удаляем лишние символы из имени файла
+	filename = filename[:n]
+	filename = bytes.Trim(filename, "\x00")
 
 	// Открываем файл и проверяем на ошибки
-	file, err := os.Open(filePath)
+	file, err := os.Open(fmt.Sprintf("FileLoad/FilesWebSiteOut/%s", filename))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		done <- true
 		return
 	}
 	defer file.Close()
@@ -64,6 +73,7 @@ func FileDownload(w http.ResponseWriter, r *http.Request) {
 	fileInfo, err := file.Stat()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		done <- true
 		return
 	}
 
@@ -76,7 +86,9 @@ func FileDownload(w http.ResponseWriter, r *http.Request) {
 	_, err = io.Copy(w, file)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		done <- true
 		return
 	}
 
+	done <- true
 }

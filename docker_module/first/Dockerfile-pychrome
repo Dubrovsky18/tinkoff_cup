@@ -1,0 +1,23 @@
+FROM python:latest
+
+RUN apt-get update && apt-get install -y \
+    xvfb \
+    wget \
+    curl \
+    unzip \
+    libglib2.0-0 \
+    libnss3 \
+    libgconf-2-4 \
+    libfontconfig1 \
+    libxrender1 \
+    libxi6 \
+    libxtst6 \
+    dpkg \
+    xvfb
+
+RUN pip install selenium webdriver-manager
+
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get install -y ./google-chrome-stable_current_amd64.deb \
+    && rm google-chrome-stable_current_amd64.deb
+

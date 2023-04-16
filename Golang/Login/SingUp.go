@@ -21,7 +21,7 @@ type Company struct {
 
 func createTable(db *sql.DB) error {
 	_, err := db.Exec(`
-		CREATE TABLE IF NOT EXISTS company (
+		CREATE TABLE IF NOT EXISTS user_work (
 			login TEXT PRIMARY KEY,
 			password TEXT NOT NULL,
 			team TEXT 
@@ -33,7 +33,7 @@ func createTable(db *sql.DB) error {
 // insertUser добавляет нового пользователя в таблицу users
 func insertUser(db *sql.DB, company Company) error {
 	_, err := db.Exec(`
-		INSERT INTO company (login, password,team)
+		INSERT INTO user_work (login, password,team)
 		VALUES ($1, $2, $3);
 	`, company.Login, company.Password, company.Team)
 	return err
