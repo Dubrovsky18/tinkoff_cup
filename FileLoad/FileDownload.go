@@ -43,13 +43,11 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 
 func FileDownload(w http.ResponseWriter, r *http.Request) {
 
-	session, err := r.Cookie("session")
-	if err != nil || session.Value == "" {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+	filename := r.URL.Query().Get("filename")
+	if filename == "" {
+		http.Error(w, "Не указано имя файла", http.StatusBadRequest)
 		return
 	}
-
-	fmt.Print(session.Value)
 
 	// Получаем путь к файлу из параметра запроса
 	filePath := fmt.Sprintf("FileLoad/FilesWebSiteOut/tests/%s/%s", userName, "OutFile")

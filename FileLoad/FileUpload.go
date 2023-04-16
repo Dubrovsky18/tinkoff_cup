@@ -74,7 +74,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := http.Post("http://localhost:5000/", "binary/octet-stream", out)
+	resp, err := http.Post("http://localhost:5000/run-tests?filename=nam", "binary/octet-stream", out)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
