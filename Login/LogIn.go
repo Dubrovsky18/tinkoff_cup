@@ -18,6 +18,7 @@ func LoginHandleGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t.ExecuteTemplate(w, "login", nil)
+
 }
 
 func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
@@ -49,6 +50,7 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
 	// Аутентифицируем пользователя и создаем сессию
 	session := &http.Cookie{
 		Name: "session",
@@ -62,5 +64,6 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 
 	// Перенаправляем пользователя на главную страницу
 	http.Redirect(w, r, "/upload", http.StatusSeeOther)
+
 
 }

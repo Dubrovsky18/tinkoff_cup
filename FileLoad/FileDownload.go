@@ -27,9 +27,11 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "download", nil)
 
 	fmt.Fprintf(w, session.Value, "Download page")
+
 }
 
 func FileDownload(w http.ResponseWriter, r *http.Request) {
+
 
 	session, err := r.Cookie("session")
 	if err != nil || session.Value == "" {
@@ -40,6 +42,7 @@ func FileDownload(w http.ResponseWriter, r *http.Request) {
 	fmt.Print(session.Value)
 	// Получаем путь к файлу из параметра запроса
 	filePath := fmt.Sprintf("FileLoad/FilesWebSiteOut/tests/%s/%s.mp4", session.Value, "OutFile")
+
 
 	// Открываем файл и проверяем на ошибки
 	file, err := os.Open(filePath)
@@ -69,3 +72,4 @@ func FileDownload(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+

@@ -40,6 +40,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Продолжаем загрузку файла
+
 	link := r.FormValue("link")
 	fmt.Printf("Link: %s", link)
 	_, fileHeader, err := r.FormFile("file")
@@ -59,7 +60,9 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	// Создаем новый файл на сервере и копируем содержимое загруженного файла в него
+
 	out, err := os.Create(filepath.Join(fmt.Sprintf("FileLoad/FilesWebSiteIn/tests/%s/%s", session.Value, header.Filename)))
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
