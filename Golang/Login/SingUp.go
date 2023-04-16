@@ -3,25 +3,28 @@ package Login
 import (
 	"database/sql"
 	"fmt"
+	"html/template"
+	"net/http"
+
 	"github.com/Dubrovsky18/tinkoff_cup/Login/Conn"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
-	"html/template"
-	"net/http"
 )
 
 // User структура, представляющая пользователя
 type Company struct {
 	Login    string
 	Password string
+	Team     string
 }
 
 func createTable(db *sql.DB) error {
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS company (
 			login TEXT PRIMARY KEY,
-			password TEXT NOT NULL
+			password TEXT NOT NULL,
+			team TEXT 
 		);
 	`)
 	return err
@@ -30,9 +33,9 @@ func createTable(db *sql.DB) error {
 // insertUser добавляет нового пользователя в таблицу users
 func insertUser(db *sql.DB, company Company) error {
 	_, err := db.Exec(`
-		INSERT INTO company (login, password)
-		VALUES ($1, $2);
-	`, company.Login, company.Password)
+		INSERT INTO company (login, password,team)
+		VALUES ($1, $2, $3);
+	`, company.Login, company.Password, company.Team)
 	return err
 }
 
@@ -50,6 +53,11 @@ func RegistrationHandlerPost(w http.ResponseWriter, r *http.Request) {
 	// Получаем данные пользователя из формы
 	login := r.FormValue("login")
 	password := r.FormValue("password")
+	team := r.FormValue("team")
+
+	if team == "" {
+		team = "default"
+	}
 
 	// Хешируем пароль
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -59,7 +67,7 @@ func RegistrationHandlerPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Создаем пользователя
-	company := Company{Login: login, Password: string(hashedPassword)}
+	company := Company{Login: login, Password: string(hashedPassword), Team: team}
 
 	db, err := Conn.OpenDB()
 	if err != nil {
