@@ -1,0 +1,17 @@
+{{ define "upload" }}
+{{ template "header" }}
+
+<main role="main" class="inner cover">
+    <h1 class="cover-heading">Page for upload test file</h1>
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="link">Link:</label>
+            <input type="text" class="form-control" id="link" name="link" placeholder="link for web-site">
+            <input type="file" name="file" />
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+</main>
+{{ template "footer" }}
+
+{{ end }}

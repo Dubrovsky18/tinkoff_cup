@@ -1,0 +1,15 @@
+{{ define "download" }}
+{{ template "header" }}
+
+<main role="main" class="inner cover">
+    <h1 class="cover-heading">Download your test</h1>
+    <form method="get" enctype="multipart/form-data" action="/downloadFile">
+        <div class="form-group">
+            <output type="file" name="file" />
+        </div>
+        <button type="submit" class="btn btn-primary">Download</button>
+    </form>
+</main>
+{{ template "footer" }}
+
+{{ end }}
