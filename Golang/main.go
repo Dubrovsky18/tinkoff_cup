@@ -33,11 +33,11 @@ func handleFunc() {
 	router.HandleFunc("/upload", FileLoad.HandleUpload).Methods("GET")
 	router.HandleFunc("/upload", FileLoad.FileUpload).Methods("POST")
 	router.HandleFunc("/download", FileLoad.HandleDownload).Methods("GET")
+	//router.HandleFunc("/downloadFile", FileLoad.FileDownload).Methods("GET")
 
 	http.Handle("/", router)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	http.ListenAndServe(":9090", nil)
-	http.ListenAndServe(":4999", nil)
 }
 
 func main() {
