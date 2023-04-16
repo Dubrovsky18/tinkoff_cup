@@ -10,6 +10,13 @@ import (
 	"strconv"
 )
 
+type User struct {
+	session  string
+	nickname string
+}
+
+var userName string
+
 func HandleDownload(w http.ResponseWriter, r *http.Request) {
 
 	// Проверяем, залогинен ли пользователь
@@ -19,6 +26,8 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userName = session.Value
+
 	t, err := template.ParseFiles("templates/download.html", "templates/header.html", "templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
@@ -26,12 +35,13 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 
 	t.ExecuteTemplate(w, "download", nil)
 
+	http.HandleFunc("/downloadFile", FileDownload)
+	http.ListenAndServe(":4999", nil)
 	fmt.Fprintf(w, session.Value, "Download page")
 
 }
 
 func FileDownload(w http.ResponseWriter, r *http.Request) {
-
 
 	session, err := r.Cookie("session")
 	if err != nil || session.Value == "" {
@@ -40,9 +50,9 @@ func FileDownload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Print(session.Value)
-	// Получаем путь к файлу из параметра запроса
-	filePath := fmt.Sprintf("FileLoad/FilesWebSiteOut/tests/%s/%s.mp4", session.Value, "OutFile")
 
+	// Получаем путь к файлу из параметра запроса
+	filePath := fmt.Sprintf("FileLoad/FilesWebSiteOut/tests/%s/%s", userName, "OutFile")
 
 	// Открываем файл и проверяем на ошибки
 	file, err := os.Open(filePath)
@@ -72,4 +82,3 @@ func FileDownload(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-

@@ -61,7 +61,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 
 	// Создаем новый файл на сервере и копируем содержимое загруженного файла в него
 
-	out, err := os.Create(filepath.Join(fmt.Sprintf("FileLoad/FilesWebSiteIn/tests/%s/%s", session.Value, header.Filename)))
+	out, err := os.Create(filepath.Join(fmt.Sprintf("FileLoad/FilesWebSiteIn/%s/%s", session.Value, header.Filename)))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -73,6 +73,13 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	resp, err := http.Post("http://localhost:5000/", "binary/octet-stream", out)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
 
 	http.Redirect(w, r, "/download", http.StatusSeeOther)
 
