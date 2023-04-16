@@ -2,13 +2,12 @@
 {{ template "header" }}
 
 <main role="main" class="inner cover">
-    <h1 class="cover-heading">The page for login with password</h1>
-    <p class="lead">login</p>
+    <h1 class="cover-heading">The page for login</h1>
     <form method="post" action="/login">
         <div class="form-group">
-            <label for="team"> Team: </label><br>
+            <label for="team"> Team: </label>
             <input type="text" class="form-control" id="team" name="team" placeholder="Enter your team(if u not in the team, skip this field)">
-            <label for="login">Company:</label>
+            <label for="login">Login:</label>
             <input type="text" class="form-control" id="login" name="login" placeholder="Enter your login Company">
             <label for="password">Password:</label>
             <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
@@ -17,6 +16,7 @@
         <p class="lead">
             <button type="submit" class="btn btn-lg btn-secondary">Login</button>
             <a href="/registration" class="btn btn-lg btn-secondary"> Sing Up</a>
+            <a href="/registration_team" class="btn btn-lg btn-secondary"> Sing Up a team</a>
         </p>
     </form>
 </main>
