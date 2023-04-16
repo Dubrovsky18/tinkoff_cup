@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strings"
 )
 
 func HandleUpload(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +42,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	serverPath := strings.ReplaceAll((session.Value + "_" + fileHeader.Filename), " ", "")
+	serverPath := session.Value + fileHeader.Filename
 
 	// Сохраняем загруженный файл на сервере
 	filePath := fmt.Sprintf("FileLoad/FilesWebSiteIn/%s", serverPath)
