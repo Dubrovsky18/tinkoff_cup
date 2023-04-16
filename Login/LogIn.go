@@ -18,7 +18,6 @@ func LoginHandleGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t.ExecuteTemplate(w, "login", nil)
-
 }
 
 func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
@@ -50,14 +49,18 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Устанавливаем cookie с информацией о пользователе
-	cookie := http.Cookie{
-		Name:     "user",
-		Value:    company.Login,
-		HttpOnly: true,
+	// Аутентифицируем пользователя и создаем сессию
+	session := &http.Cookie{
+		Name: "session",
+		//Value:  string(rune(rand.Intn(int(time.Now().UnixNano())))), // Идентификатор пользователя
+		Value:  company.Login,
+		MaxAge: 60 * 5 * 1,
+		Path:   "/",
 	}
-	http.SetCookie(w, &cookie)
+
+	http.SetCookie(w, session)
 
 	// Перенаправляем пользователя на главную страницу
 	http.Redirect(w, r, "/upload", http.StatusSeeOther)
+
 }
