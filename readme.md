@@ -8,3 +8,7 @@ Python3 версии 3.7+
 Golang
 
 
+Далее нужно выдать права на выполнение скрипта script.sh
+
+'''chmod +x script.sh'''
+
