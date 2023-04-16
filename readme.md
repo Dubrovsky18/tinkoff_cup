@@ -1,5 +1,5 @@
 # Tikoff cup
-НАправление - SRE
+Направление - SRE
 
 Для запуска сервиса нужно иметь установленный докер ( скрипт установки docker.sh нужно запустить с root привелегиями)
 
@@ -28,3 +28,7 @@ http://localhost:9090/registration
 И далее авторизируемся с учетными данными по этому адресу
 
 http://localhost:9090/login
+
+Ссылка на видео
+
+https://drive.google.com/drive/folders/1glnw9r4LfzYczJe3EihncLAp-l9aprVI?usp=sharing
