@@ -7,14 +7,12 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
+	"strings"
 )
 
 func HandleUpload(w http.ResponseWriter, r *http.Request) {
-
 	// Проверяем, что пользователь аутентифицирован
 	session, err := r.Cookie("session")
-
 	if err != nil || session.Value == "" {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -22,65 +20,61 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 
 	t, err := template.ParseFiles("templates/upload.html", "templates/header.html", "templates/footer.html")
 	if err != nil {
-		fmt.Fprintf(w, err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	t.ExecuteTemplate(w, "upload", nil)
 
-	fmt.Fprintf(w, session.Value, "Upload page")
-
 }
+
 func FileUpload(w http.ResponseWriter, r *http.Request) {
-
+	// Проверяем, что пользователь аутентифицирован
 	session, err := r.Cookie("session")
-
 	if err != nil || session.Value == "" {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-
-	// Продолжаем загрузку файла
-
-	link := r.FormValue("link")
-	fmt.Printf("Link: %s", link)
-	_, fileHeader, err := r.FormFile("file")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	filename := filepath.Base(fileHeader.Filename)
-	fmt.Printf("\n File Name: %s", filename)
-
-	// Сохраняем загруженный файл на сервере
-	file, header, err := r.FormFile("file")
+	// Получаем информацию о загружаемом файле
+	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer file.Close()
 
-	// Создаем новый файл на сервере и копируем содержимое загруженного файла в него
+	serverPath := strings.ReplaceAll((session.Value + "_" + fileHeader.Filename), " ", "")
 
-	out, err := os.Create(filepath.Join(fmt.Sprintf("FileLoad/FilesWebSiteIn/%s/%s", session.Value, header.Filename)))
-
+	// Сохраняем загруженный файл на сервере
+	filePath := fmt.Sprintf("FileLoad/FilesWebSiteIn/%s", serverPath)
+	out, err := os.Create(filePath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer out.Close()
+
 	_, err = io.Copy(out, file)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	resp, err := http.Post("http://localhost:5000/run-tests?filename=nam", "binary/octet-stream", out)
+	// Отправляем файл на другой сервер для обработки
+	f, err := os.Open(filePath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer f.Close()
+
+	resp, err := http.Post("http://localhost:5000/run-tests?filename="+serverPath, "application/octet-stream", f)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
 
+	// Перенаправляем пользователя на страницу с загрузкой
 	http.Redirect(w, r, "/download", http.StatusSeeOther)
-
 }
