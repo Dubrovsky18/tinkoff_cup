@@ -40,7 +40,7 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 
 	// Ищем пользователя в базе данных PostgreSQL
 	var company Company
-	err = db.QueryRow("SELECT * FROM company WHERE login=$1 and team=$2", login, team).Scan(&company.Login, &company.Password, &company.Team)
+	err = db.QueryRow("SELECT * FROM user_work WHERE login=$1 and team=$2", login, team).Scan(&company.Login, &company.Password, &company.Team)
 	if err == sql.ErrNoRows {
 		http.Error(w, "Invalid login or password", http.StatusBadRequest)
 		return
@@ -58,8 +58,7 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 
 	// Аутентифицируем пользователя и создаем сессию
 	session := &http.Cookie{
-		Name: "session",
-		//Value:  string(rune(rand.Intn(int(time.Now().UnixNano())))), // Идентификатор пользователя
+		Name:   "session",
 		Value:  company.Login,
 		MaxAge: 60 * 5 * 1,
 		Path:   "/",
