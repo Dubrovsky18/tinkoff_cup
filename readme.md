@@ -10,5 +10,5 @@ Golang
 
 Далее нужно выдать права на выполнение скрипта script.sh
 
-'''chmod +x script.sh'''
+``chmod +x script.sh ``
 
