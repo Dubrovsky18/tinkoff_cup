@@ -1,4 +1,4 @@
-ackage FileLoad
+package FileLoad
 
 import (
 	"bytes"
