@@ -54,7 +54,7 @@ func HandleFileDownload(w http.ResponseWriter, r *http.Request) {
 	// Устанавливаем заголовки
 	w.Header().Set("Content-Disposition", "attachment; filename="+fileInfo.Name())
 	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Length", string(10))
+	w.Header().Set("Content-Length", string(fileInfo.Size()))
 
 	// Копируем содержимое файла в ResponseWriter
 	_, err = io.Copy(w, file)
