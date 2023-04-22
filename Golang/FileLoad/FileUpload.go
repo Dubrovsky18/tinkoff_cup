@@ -106,6 +106,14 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("error %s", err)
 	}
 	fmt.Println(string(cmd))
+	_, err = exec.Command("docker", "stop", fmt.Sprintf("%s-chrome-video", user.Name)).Output()
+	if err != nil {
+		fmt.Printf("error %s", err)
+	}
+	_, err = exec.Command("mv", "chrome.mp4", fmt.Sprintf("%s-chrome-video.mp4", user.Name)).Output()
+	if err != nil {
+		fmt.Printf("error %s", err)
+	}
 
 	fmt.Println("Selenium test completed successfully")
 

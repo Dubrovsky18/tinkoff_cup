@@ -2,7 +2,7 @@ version: "3"
 services:
   chrome:
     image: selenium/node-chrome:4.8.3-20230404
-    container_name: ${USER}-chrome
+    container_name: ${USER1}-chrome
     shm_size: 2gb
     depends_on:
       - selenium-hub
@@ -67,7 +67,7 @@ services:
 
   chrome_video:
     image: selenium/video:ffmpeg-4.3.1-20230404
-    container_name: ${USER}-chrome-video
+    container_name: ${USER1}-chrome-video
     volumes:
       - ${TEAM_VOLUME}:/videos
     depends_on:
@@ -78,8 +78,8 @@ services:
 
   selenium-hub:
     image: selenium/hub:4.8.3-20230404
-    container_name: ${USER}-selenium-hub
+    container_name: ${USER1}-selenium-hub
     ports:
-      - "${PORT4}:4442"
+      - "${PORT1}:4442"
       - "${PORT2}:4443"
       - "${PORT3}:4444"
