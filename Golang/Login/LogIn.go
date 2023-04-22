@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
 	"os"
+	"os/exec"
 
 	"github.com/Dubrovsky18/tinkoff_cup/Login/Conn"
 	_ "github.com/Dubrovsky18/tinkoff_cup/Login/Conn"
@@ -86,15 +88,31 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, session)
+	cmd := exec.Command("mkdir", company.Login)
 
-	userFolder := fmt.Sprintf("Test/%s", login)
-	_, err = os.Stat(userFolder)
-	err = CreateIfNotExists(userFolder, 0777)
-	fmt.Println("Create")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+	output, _ := cmd.CombinedOutput()
+	fmt.Println(string(output))
 
+	http.SetCookie(w, session)
+	cmd3 := exec.Command("ls", company.Login)
+	output3, _ := cmd3.CombinedOutput()
+	fmt.Println(string(output3))
+
+	src := "./Tests/docker-compose.yml"
+	dest := fmt.Sprintf("./%s/docker-compose.yml", company.Login)
+	copy := exec.Command("cp", src, dest)
+	output2, _ := copy.CombinedOutput()
+	fmt.Println(string(output2))
+
+	src1 := "./Tests/.env"
+	dest1 := fmt.Sprintf("./%s/.env", company.Login)
+	copy1 := exec.Command("cp", src1, dest1)
+	output5, _ := copy1.CombinedOutput()
+	fmt.Println(string(output5))
+
+	// echo1 := exec.Command("echo", fmt.Sprintf("USER=%s",company.Login), ">>", dest1 )
+	// outpute, _ := echo1.CombinedOutput()
+	// fmt.Println(string(outpute))
 	// Перенаправляем пользователя на главную страницу
 	http.Redirect(w, r, "/upload", http.StatusSeeOther)
 

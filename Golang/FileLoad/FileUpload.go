@@ -2,18 +2,19 @@ package FileLoad
 
 import (
 	"fmt"
-	"github.com/Dubrovsky18/tinkoff_cup/Tests"
 	"html/template"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
+	"os/exec"
 )
 
 type User struct {
 	Name  string
-	port1 string
-	port2 string
-	port3 string
+	port1 int
+	port2 int
+	port3 int
 }
 
 var user User
@@ -52,22 +53,6 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	link := r.FormValue("link")
 	fmt.Println(link)
 
-	//for i := 0; i < 3; {
-	//	port := rand.Intn(30000-20000+1) + 20000
-	//	if !contains(ports, port) {
-	//		ports = append(ports, port)
-	//		if user.port1 == "" {
-	//			user.port1 = string(port)
-	//		} else if user.port2 == "" {
-	//			user.port2 = string(port)
-	//		} else if user.port3 == "" {
-	//			user.port3 = string(port)
-	//		}
-	//		i++
-	//	}
-	//}
-	//fmt.Println(user.port1, user.port2, user.port3)
-
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -75,8 +60,24 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
+	for i := 0; i < 3; {
+		port := rand.Intn(30000-20000+1) + 20000
+		if !contains(ports, port) {
+			ports = append(ports, port)
+			if user.port1 == "" {
+				user.port1 = port
+			} else if user.port2 == "" {
+				user.port2 = port
+			} else if user.port3 == "" {
+				user.port3 = port
+			}
+			i++
+		}
+	}
+	fmt.Println(user.port1, user.port2, user.port3)
+
 	fileName := fileHeader.Filename
-	filePath := fmt.Sprintf("Test/%s/%s", user.Name, fileName)
+	filePath := fmt.Sprintf("%s/%s", user.Name, fileName)
 
 	out, err := os.Create(filePath)
 	if err != nil {
@@ -90,9 +91,20 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	//Tests.RunTester(userFolder, fileName, link, user.Name, user.port1, user.port2, user.port3)
-	filePathOut = Tests.RunTester(filePath, fileName, link, user.Name)
-	fmt.Println(filePathOut)
+
+	bash := "./Tests/create_sandbox.sh"
+
+	_, err = exec.Command(bash, user.Name, fileName, link, user.Name, user.port1, user.port2, user.port3).Output()
+	if err != nil {
+		fmt.Printf("error %s", err)
+	}
+
+	start_docker := "./Tests/start_docker.sh"
+	cmd, err := exec.Command(start_docker, user.Name, user.Name, fileName).Output()
+	if err != nil {
+		fmt.Printf("error %s", err)
+	}
+	fmt.Println(string(cmd))
 
 	fmt.Println("Selenium test completed successfully")
 
