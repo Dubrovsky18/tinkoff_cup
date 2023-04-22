@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 
 	"github.com/Dubrovsky18/tinkoff_cup/Login/Conn"
 	_ "github.com/Dubrovsky18/tinkoff_cup/Login/Conn"
@@ -65,6 +66,15 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, session)
+
+	userFolder := fmt.Sprintf("Tests/%s", login)
+	_, err = os.Stat(userFolder)
+	if os.IsNotExist(err) {
+		err = os.Mkdir(userFolder, 777)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	}
 
 	// Перенаправляем пользователя на главную страницу
 	http.Redirect(w, r, "/upload", http.StatusSeeOther)

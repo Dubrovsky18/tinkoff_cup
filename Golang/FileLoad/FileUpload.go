@@ -75,19 +75,10 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	userFolder := fmt.Sprintf("Tests/%s", user.Name)
-	_, err = os.Stat(userFolder)
-	if os.IsNotExist(err) {
-		err = os.Mkdir(userFolder, 777)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-	}
-
 	fileName := fileHeader.Filename
-	filePathIn := fmt.Sprintf("%s/%s", userFolder, fileName)
+	filePath := fmt.Sprintf("Test/%s/%s", user.Name, fileName)
 
-	out, err := os.Create(filePathIn)
+	out, err := os.Create(filePath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -100,7 +91,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//Tests.RunTester(userFolder, fileName, link, user.Name, user.port1, user.port2, user.port3)
-	filePathOut = Tests.RunTester(userFolder, fileName, link, user.Name)
+	filePathOut = Tests.RunTester(filePath, fileName, link, user.Name)
 	fmt.Println(filePathOut)
 
 	fmt.Println("Selenium test completed successfully")
