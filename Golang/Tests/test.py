@@ -6,7 +6,7 @@ load_dotenv()
 
 def test_200():
     options_G = webdriver.ChromeOptions()
-    port = os.getenv('PORT3')
+    port = os.getenv('PORT')
     url = os.getenv('URL')
     driver = webdriver.Remote(
         command_executor=f'http://localhost:{port}',
@@ -38,5 +38,13 @@ xhr.send(null);
     assert status_code == 200 or status_code == "200"
 
 
+def test_xframe():
+    import requests
+    req = requests.get('https://www.tinkoff.ru/')
+
+    result = req.headers['x-frame-options']  
+
+    assert result == "sameorigin" or result == "deny" or result == "allow-from:"
+    
 
 

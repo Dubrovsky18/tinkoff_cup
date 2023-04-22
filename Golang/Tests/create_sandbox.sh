@@ -1,6 +1,5 @@
 #!/bin/bash
 
-pwd
 cp docker-compose.yml $1/docker-compose.yml
 if [ -f $1/.env ]
     then

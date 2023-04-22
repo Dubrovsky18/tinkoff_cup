@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"os/exec"
 )
 
 type User struct {
@@ -39,9 +38,7 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-
 	user.Name = session.Value
-
 	t, err := template.ParseFiles("templates/upload.html", "templates/header.html", "templates/footer.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -78,16 +75,14 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	userFolder := fmt.Sprintf("/tmp/%s", user.Name)
+	userFolder := fmt.Sprintf("Tests/%s", user.Name)
 	_, err = os.Stat(userFolder)
 	if os.IsNotExist(err) {
-		_, _ = exec.Command(".create.sh", userFolder).Output()
+		err = os.Mkdir(userFolder, 777)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 	}
-	//	err = os.Mkdir(userFolder, 777)
-	//	if err != nil {
-	//		fmt.Println(err.Error())
-	//	}
-	//	os.Chmod(userFolder, 777)
 
 	fileName := fileHeader.Filename
 	filePathIn := fmt.Sprintf("%s/%s", userFolder, fileName)
@@ -104,7 +99,6 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	//Tests.RunTester(userFolder, fileName, link, user.Name, user.port1, user.port2, user.port3)
 	filePathOut = Tests.RunTester(userFolder, fileName, link, user.Name)
 	fmt.Println(filePathOut)

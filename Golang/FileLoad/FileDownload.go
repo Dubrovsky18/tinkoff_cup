@@ -28,7 +28,7 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 
 func HandleFileDownload(w http.ResponseWriter, r *http.Request) {
 	// Проверяем существование файла
-	_, err := os.Stat(fmt.Sprintf("/tmp/%s/%s", user.Name, filePathOut))
+	_, err := os.Stat(fmt.Sprintf("FileLoad/FilesWebSiteUser/%s/%s", user.Name, filePathOut))
 	if os.IsNotExist(err) {
 		http.NotFound(w, r)
 		return
