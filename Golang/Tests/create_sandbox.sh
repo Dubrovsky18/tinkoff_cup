@@ -1,12 +1,12 @@
 #!/bin/bash
 
-cp docker-compose.yml $1/docker-compose.yml
+sudo cp docker-compose.yml $1/docker-compose.yml
 if [ -f $1/.env ]
     then
-    rm $1/.env
+    sudo rm $1/.env -y
 fi
 
-cp .env $1/.env
+sudo cp .env $1/.env
 cd $1
 
 echo "FILE=$2" >> .env

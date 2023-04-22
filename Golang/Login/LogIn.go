@@ -23,6 +23,26 @@ func LoginHandleGet(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func Exists(filePath string) bool {
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
+}
+
+func CreateIfNotExists(dir string, perm int) error {
+	if Exists(dir) {
+		return nil
+	}
+
+	if err := os.Mkdir(dir, os.FileMode(perm)); err != nil {
+		return fmt.Errorf("failed to create directory: '%s', error: '%s'", dir, err.Error())
+	}
+
+	return nil
+}
+
 func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	login := r.FormValue("login")
 	password := r.FormValue("password")
@@ -67,13 +87,12 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, session)
 
-	userFolder := fmt.Sprintf("Tests/%s", login)
+	userFolder := fmt.Sprintf("Test/%s", login)
 	_, err = os.Stat(userFolder)
-	if os.IsNotExist(err) {
-		err = os.Mkdir(userFolder, 777)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+	err = CreateIfNotExists(userFolder, 0777)
+	fmt.Println("Create")
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 
 	// Перенаправляем пользователя на главную страницу
