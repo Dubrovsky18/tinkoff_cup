@@ -28,12 +28,15 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 
 func HandleFileDownload(w http.ResponseWriter, r *http.Request) {
 	// Проверяем существование файла
-	_, err := os.Stat(fmt.Sprintf("FileLoad/FilesWebSiteUser/%s/%s", user.Name, filePathOut))
+
+	filePathOut = "test.py"
+	filePathOut = fmt.Sprintf("%s/%s", user.Name, "test.py")
+	_, err := os.Stat(filePathOut)
 	if os.IsNotExist(err) {
 		http.NotFound(w, r)
 		return
 	}
-
+	
 	// Открываем файл и проверяем на ошибки
 	file, err := os.Open(filePathOut)
 	if err != nil {
@@ -52,7 +55,7 @@ func HandleFileDownload(w http.ResponseWriter, r *http.Request) {
 	// Устанавливаем заголовки
 	w.Header().Set("Content-Disposition", "attachment; filename="+fileInfo.Name())
 	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Length", string(10))
+	w.Header().Set("Content-Length", string(99))
 
 	// Копируем содержимое файла в ResponseWriter
 	_, err = io.Copy(w, file)
