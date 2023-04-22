@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
 )
 
 type User struct {
@@ -64,11 +65,11 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		port := rand.Intn(30000-20000+1) + 20000
 		if !contains(ports, port) {
 			ports = append(ports, port)
-			if user.port1 == "" {
+			if user.port1 == 0 {
 				user.port1 = port
-			} else if user.port2 == "" {
+			} else if user.port2 == 0 {
 				user.port2 = port
-			} else if user.port3 == "" {
+			} else if user.port3 == 0 {
 				user.port3 = port
 			}
 			i++
@@ -94,7 +95,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 
 	bash := "./Tests/create_sandbox.sh"
 
-	_, err = exec.Command(bash, user.Name, fileName, link, user.Name, user.port1, user.port2, user.port3).Output()
+	_, err = exec.Command(bash, user.Name, fileName, link, user.Name, strconv.Itoa(user.port1), strconv.Itoa(user.port2), strconv.Itoa(user.port3)).Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
