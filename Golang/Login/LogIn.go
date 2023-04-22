@@ -60,7 +60,7 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	session := &http.Cookie{
 		Name:   "session",
 		Value:  company.Login,
-		MaxAge: 60 * 5 * 1,
+		MaxAge: 60 * 60 * 1,
 		Path:   "/",
 	}
 
