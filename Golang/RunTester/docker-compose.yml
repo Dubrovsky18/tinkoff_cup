@@ -1,0 +1,85 @@
+version: "3"
+services:
+  chrome:
+    image: selenium/node-chrome:4.8.3-20230404
+    container_name: ${USER1}-chrome
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_SESSION_RETRY_INTERVAL=2
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - SE_NODE_MAX_SESSIONS=${MAX_SESSIONS}
+      - SE_RECORDVIDEO=true
+    healthcheck:
+      test: ["CMD", "/opt/bin/check-grid.sh --host 0.0.0.0 --port 4442"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  # edge:
+  #   image: selenium/node-edge:4.8.3-20230404
+  #   container_name: ${TEAM}-edge
+  #   shm_size: 2gb
+  #   depends_on:
+  #     - selenium-hub
+  #   environment:
+  #     - SE_EVENT_BUS_HOST=selenium-hub
+  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #     - SE_SESSION_RETRY_INTERVAL=2
+  #     - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+  #     - SE_NODE_MAX_SESSIONS=${MAX_SESSIONS}
+  #     - SE_RECORDVIDEO=true
+
+  #   healthcheck:
+  #     test: ["CMD", "/opt/bin/check-grid.sh --host 0.0.0.0 --port 4443"]
+  #     interval: 1m30s
+  #     timeout: 30s
+  #     retries: 5
+  #     start_period: 30s
+
+
+  # firefox:
+  #   image: selenium/node-firefox:4.8.3-20230404
+  #   container_name: ${TEAM}-firefox
+  #   shm_size: 2gb
+  #   depends_on:
+  #     - selenium-hub
+  #   environment:
+  #     - SE_EVENT_BUS_HOST=selenium-hub
+  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #     - SE_SESSION_RETRY_INTERVAL=2
+  #     - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+  #     - SE_NODE_MAX_SESSIONS=${MAX_SESSIONS}
+  #     - SE_RECORDVIDEO=true
+  #   healthcheck:
+  #     test: ["CMD", "/opt/bin/check-grid.sh --host 0.0.0.0 --port 4444"]
+  #     interval: 1m30s
+  #     timeout: 30s
+  #     retries: 5
+  #     start_period: 30s
+
+  chrome_video:
+    image: selenium/video:ffmpeg-4.3.1-20230404
+    container_name: ${USER1}-chrome-video
+    volumes:
+      - ${USER_VOLUME}:/videos
+    depends_on:
+      - chrome
+    environment:
+      - DISPLAY_CONTAINER_NAME=chrome
+      - FILE_NAME=${CHROME_VIDEO}
+
+  selenium-hub:
+    image: selenium/hub:4.8.3-20230404
+    container_name: ${USER1}-selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "${PORT}:4444"
