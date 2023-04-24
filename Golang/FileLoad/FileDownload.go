@@ -21,7 +21,6 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, err.Error())
 	}
 
-	go HandleFileDownload(w, r)
 	t.ExecuteTemplate(w, "download", nil)
 
 }
@@ -29,7 +28,7 @@ func HandleDownload(w http.ResponseWriter, r *http.Request) {
 func HandleFileDownload(w http.ResponseWriter, r *http.Request) {
 	// Проверяем существование файла
 
-	filePathOut = fmt.Sprintf("%s/%s-%s", user.Name, user.Name, "video.mp4")
+	filePathOut = fmt.Sprintf("Test/%s/chrome-%s-video.mp4", user.Name, user.Name)
 	_, err := os.Stat(filePathOut)
 	if os.IsNotExist(err) {
 		http.NotFound(w, r)

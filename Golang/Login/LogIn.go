@@ -88,24 +88,21 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, session)
-	cmd := exec.Command("mkdir", company.Login)
+
+	folder := fmt.Sprintf("Test/%s", company.Login)
+	cmd := exec.Command("mkdir", folder)
 
 	output, _ := cmd.CombinedOutput()
 	fmt.Println(string(output))
 
-	http.SetCookie(w, session)
-	cmd3 := exec.Command("ls", company.Login)
-	output3, _ := cmd3.CombinedOutput()
-	fmt.Println(string(output3))
-
-	src := "./Tests/docker-compose.yml"
-	dest := fmt.Sprintf("./%s/docker-compose.yml", company.Login)
+	src := "./RunTester/docker-compose.yml"
+	dest := fmt.Sprintf("%s/docker-compose.yml", folder)
 	copy := exec.Command("cp", src, dest)
 	output2, _ := copy.CombinedOutput()
 	fmt.Println(string(output2))
 
-	src1 := "./Tests/.env"
-	dest1 := fmt.Sprintf("./%s/.env", company.Login)
+	src1 := "./RunTester/.env"
+	dest1 := fmt.Sprintf("./Test/%s/.env", company.Login)
 	copy1 := exec.Command("cp", src1, dest1)
 	output5, _ := copy1.CombinedOutput()
 	fmt.Println(string(output5))

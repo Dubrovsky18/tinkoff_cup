@@ -2,11 +2,13 @@ package FileLoad
 
 import (
 	"fmt"
+	"github.com/Dubrovsky18/tinkoff_cup/RunTester"
 	"html/template"
 	"io"
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 type User struct {
@@ -91,6 +93,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	RunTester.RunTester(link, user.Name, fmt.Sprintf("Test/%s", user.Name), strconv.Itoa(user.port1), strconv.Itoa(user.port2), strconv.Itoa(user.port3))
 	fmt.Println("Selenium test completed successfully")
 
 	// Redirect the user to the download page
