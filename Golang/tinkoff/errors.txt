@@ -1,2 +1,0 @@
-ERROR: file or directory not found: tinkoff
-

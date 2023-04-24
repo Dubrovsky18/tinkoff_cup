@@ -1,7 +1,0 @@
-============================= test session starts ==============================
-platform linux -- Python 3.10.6, pytest-7.2.0, pluggy-1.0.0
-rootdir: /home/robert/new/tinkoff_cup/Golang/1111
-plugins: shell-utilities-1.7.0, helpers-namespace-2021.12.29, skip-markers-1.4.0
-collected 0 items
-
-============================ no tests ran in 0.00s =============================
