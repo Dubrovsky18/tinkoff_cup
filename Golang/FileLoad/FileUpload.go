@@ -7,8 +7,6 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
-	"os/exec"
-	"strconv"
 )
 
 type User struct {
@@ -78,7 +76,7 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(user.port1, user.port2, user.port3)
 
 	fileName := fileHeader.Filename
-	filePath := fmt.Sprintf("%s/%s", user.Name, fileName)
+	filePath := fmt.Sprintf("Test/%s/%s", user.Name, fileName)
 
 	out, err := os.Create(filePath)
 	if err != nil {
@@ -91,29 +89,6 @@ func FileUpload(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	bash := "./Tests/create_sandbox.sh"
-
-	_, err = exec.Command(bash, user.Name, fileName, link, user.Name, strconv.Itoa(user.port1), strconv.Itoa(user.port2), strconv.Itoa(user.port3)).Output()
-	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-
-	start_docker := "./Tests/start_docker.sh"
-	cmd, err := exec.Command(start_docker, user.Name, user.Name, fileName).Output()
-	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-
-	fmt.Println(string(cmd))
-	//_, err = exec.Command("docker", "stop", fmt.Sprintf("%s-chrome-video", user.Name)).Output()
-	//if err != nil {
-	//	fmt.Printf("error %s", err)
-	//}
-	_, err = exec.Command("mv", "chrome.mp4", fmt.Sprintf("%s-chrome-video.mp4", user.Name)).Output()
-	if err != nil {
-		fmt.Printf("error %s", err)
 	}
 
 	fmt.Println("Selenium test completed successfully")
