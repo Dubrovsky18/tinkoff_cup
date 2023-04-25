@@ -2,24 +2,54 @@
 {{ template "header" }}
 
 <main role="main" class="inner cover">
-    <h1 class="cover-heading">The page for login</h1>
-    <form method="post" action="/login">
-        <div class="form-group">
-            <label for="team"> Team: </label>
-            <input type="text" class="form-control" id="team" name="team" placeholder="Enter your team(if u not in the team, skip this field)">
-            <label for="login">Login:</label>
-            <input type="text" class="form-control" id="login" name="login" placeholder="Enter your login Company">
-            <label for="password">Password:</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
+    <div id="login-form">
+        <h1>Авторизация</h1>
+        <form action="/login" method="post">
+            <div>
+                <label for="team"> Команда: </label>
+                <input type="text" class="form-control" id="team" name="team"
+                       placeholder="Enter your Team">
+            </div>
+            <div>
+                <label for="login">Имя пользователя:</label>
+                <input type="text" class="form-control" id="login" name="login"
+                       placeholder="Enter your Login">
+            </div>
+            <div>
+                <label for="password">Пароль:</label>
+                <input type="password" class="form-control" id="password" name="password"
+                       placeholder="Enter your Password">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-lg btn-secondary">Login</button>
+                <a href="/registration" type="submit" class="btn btn-lg btn-secondary"> Sing Up</a>
+            </div>
+        </form>
+    </div>
+</main>
 
-        </div>
-        <p class="lead">
-            <button type="submit" class="btn btn-lg btn-secondary">Login</button>
-            <a href="/registration" class="btn btn-lg btn-secondary"> Sing Up</a>
+
+<!--<main role="main" class="inner cover">-->
+<!--    <h1 class="cover-heading">The page for login</h1>-->
+<!--    <form method="post" action="/login">-->
+<!--        <div class="form-group">-->
+<!--            <label for="team"> Team: </label>-->
+<!--            <input type="text" class="form-control" id="team" name="team" placeholder="Enter your team(if u not in the team, skip this field)">-->
+<!--            <label for="login">Login:</label>-->
+<!--            <input type="text" class="form-control" id="login" name="login" placeholder="Enter your login Company">-->
+<!--            <label for="password">Password:</label>-->
+<!--            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">-->
+
+<!--        </div>-->
+<!--        <p class="lead">-->
+<!--            <button type="submit" class="btn btn-lg btn-secondary">Login</button>-->
+<!--
             <a href="/registration_team" class="btn btn-lg btn-secondary"> Sing Up a team</a>
         </p>
     </form>
-</main>
+<!- -->
+
+
 {{ template "footer" }}
 
 {{ end }}

@@ -13,7 +13,7 @@ import (
 )
 
 // User структура, представляющая пользователя
-type Company struct {
+type User struct {
 	Login    string
 	Password string
 	Team     string
@@ -31,7 +31,7 @@ func createTable(db *sql.DB) error {
 }
 
 // insertUser добавляет нового пользователя в таблицу users
-func insertUser(db *sql.DB, company Company) error {
+func insertUser(db *sql.DB, company User) error {
 	_, err := db.Exec(`
 		INSERT INTO user_work (login, password,team)
 		VALUES ($1, $2, $3);
@@ -47,7 +47,7 @@ func RegistrationHandlerGet(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, err.Error())
 	}
 	err = t.ExecuteTemplate(w, "registration", nil)
-	fmt.Println(err)
+
 }
 func RegistrationHandlerPost(w http.ResponseWriter, r *http.Request) {
 	// Получаем данные пользователя из формы
@@ -67,7 +67,7 @@ func RegistrationHandlerPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Создаем пользователя
-	company := Company{Login: login, Password: string(hashedPassword), Team: team}
+	user := User{Login: login, Password: string(hashedPassword), Team: team}
 
 	db, err := Conn.OpenDB()
 	if err != nil {
@@ -84,7 +84,7 @@ func RegistrationHandlerPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Добавляем пользователя в базу данных PostgreSQL
-	err = insertUser(db, company)
+	err = insertUser(db, user)
 	if err != nil {
 		// Если пользователь уже существует, то выведем ошибку
 		if pgErr, ok := err.(*pq.Error); ok && pgErr.Code == "23505" {

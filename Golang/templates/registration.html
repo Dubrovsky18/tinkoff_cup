@@ -3,21 +3,27 @@
 
 
 <main role="main" class="inner cover">
-    <h1 class="cover-heading">The page for Registration</h1>
-    <form method="POST" action="/registration">
-        <div class="form-group">
-            <label for="login"> Team: </label><br>
-            <input type="text" class="form-control" id="team" name="team" placeholder="Enter your team">
-            <label for="login">Login:</label><br>
-            <input type="text" class="form-control" id="login" name="login" placeholder="Enter your login Company">
-            <label for="password">Password:</label><br>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
-        </div>
-        <p class="lead">
-        <button type="submit" class="btn btn-lg btn-secondary">Sing Up</button>
-        <a href="/login" class="btn btn-lg btn-secondary"> Back to login</a>
-        </p>
-    </form>
+    <div id="login-form">
+        <h1 class="cover-heading">Registration</h1>
+        <form action="/registration" method="post">
+            <div>
+                <label for="team">Команда</label>
+                <input type="text" name="team" id="team"/>
+            </div>
+            <div>
+                <label for="login">Имя пользователя:</label>
+                <input type="text" name="username" id="login"/>
+            </div>
+            <div>
+                <label for="password">Пароль:</label>
+                <input type="password" name="password" id="password"/>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-lg btn-secondary">Sing Up</button>
+                <a href="/registration_team" type="submit" class="btn btn-lg btn-secondary"> Sing Up Team</a>
+            </div>
+        </form>
+    </div>
 </main>
 
 {{ template "footer" }}

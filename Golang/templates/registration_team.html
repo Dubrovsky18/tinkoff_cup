@@ -2,23 +2,37 @@
 {{ template "header" }}
 
 
+
+
 <main role="main" class="inner cover">
-    <h1 class="cover-heading">The page for Registration</h1>
-    <p class="lead">login</p>
-    <form method="POST" action="/registration_team">
-        <div class="form-group">
-            <label for="login"> Team: </label><br>
-            <input type="text" class="form-control" id="team" name="team" placeholder="Enter your team">
-        </div>
-        <p class="lead">
-        <button type="submit" class="btn btn-lg btn-secondary">Sing Up</button>
-        <a href="/login" class="btn btn-lg btn-secondary"> Back to login</a>
-        </p>
-    </form>
-        
-        
-    </p>
+    <div id="login-form">
+        <h1 class="cover-heading">Registration Team</h1>
+        <form action="/registration_team" method="post">
+            <div>
+                <label for="team">Команда</label>
+                <input type="text" name="team" id="team"/>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-lg btn-secondary">Sing Up Team</button>
+            </div>
+        </form>
+    </div>
 </main>
+
+<!--<main role="main" class="inner cover">-->
+<!--    <h1 class="cover-heading">The page for Registration</h1>-->
+<!--    <p class="lead">login</p>-->
+<!--    <form method="POST" action="/registration_team">-->
+<!--        <div class="form-group">-->
+<!--            <label for="team"> Team: </label><br>-->
+<!--            <input type="text" class="form-control" id="team" name="team" placeholder="Enter your team">-->
+<!--        </div>-->
+<!--        <p class="lead">-->
+<!--        <button type="submit" class="btn btn-lg btn-secondary">Sing Up</button>-->
+<!--        <a href="/login" class="btn btn-lg btn-secondary"> Back to login</a>-->
+<!--        </p>-->
+<!--    </form>-->
+<!--</main>-->
 
 {{ template "footer" }}
 

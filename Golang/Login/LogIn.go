@@ -62,8 +62,8 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	// Ищем пользователя в базе данных PostgreSQL
-	var company Company
-	err = db.QueryRow("SELECT * FROM user_work WHERE login=$1 and team=$2", login, team).Scan(&company.Login, &company.Password, &company.Team)
+	var user User
+	err = db.QueryRow("SELECT * FROM user_work WHERE login=$1 and team=$2", login, team).Scan(&user.Login, &user.Password, &user.Team)
 	if err == sql.ErrNoRows {
 		http.Error(w, "Invalid login or password", http.StatusBadRequest)
 		return
@@ -73,7 +73,7 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Проверяем пароль
-	err = bcrypt.CompareHashAndPassword([]byte(company.Password), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		http.Error(w, "Invalid login or password", http.StatusBadRequest)
 		return
@@ -82,14 +82,15 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	// Аутентифицируем пользователя и создаем сессию
 	session := &http.Cookie{
 		Name:   "session",
-		Value:  company.Login,
+		Value:  user.Login,
 		MaxAge: 60 * 60 * 1,
 		Path:   "/",
 	}
 
 	http.SetCookie(w, session)
 
-	folder := fmt.Sprintf("Test/%s", company.Login)
+	fmt.Println(user.Login)
+	folder := fmt.Sprintf("Test/%s", user.Login)
 	cmd := exec.Command("mkdir", folder)
 
 	output, _ := cmd.CombinedOutput()
@@ -102,15 +103,14 @@ func LoginHandlePost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(string(output2))
 
 	src1 := "./RunTester/.env"
-	dest1 := fmt.Sprintf("./Test/%s/.env", company.Login)
+	dest1 := fmt.Sprintf("./Test/%s/.env", user.Login)
 	copy1 := exec.Command("cp", src1, dest1)
 	output5, _ := copy1.CombinedOutput()
 	fmt.Println(string(output5))
 
-	// echo1 := exec.Command("echo", fmt.Sprintf("USER=%s",company.Login), ">>", dest1 )
+	// echo1 := exec.Command("echo", fmt.Sprintf("USER=%s",user.Login), ">>", dest1 )
 	// outpute, _ := echo1.CombinedOutput()
 	// fmt.Println(string(outpute))
-	// Перенаправляем пользователя на главную страницу
+	// Перенаправляем пользователя на главную страниц
 	http.Redirect(w, r, "/upload", http.StatusSeeOther)
-
 }
